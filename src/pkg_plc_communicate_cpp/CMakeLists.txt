@@ -10,24 +10,35 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(pkg_beien_paint_msgs REQUIRED)
+find_package(PkgConfig REQUIRED)
 
-add_executable(plc_reader 
-  src/plc_reader_node/plc_reader_node.cpp
-  src/plc_reader.cpp
+pkg_check_modules(LIBMODBUS REQUIRED libmodbus)
+
+add_executable(plc_communicate 
+  src/pkg_plc_communicate_cpp/plc_communicate_node.cpp
+  src/plc_communicate.cpp
 )
-target_include_directories(plc_reader PUBLIC
+target_include_directories(plc_communicate PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/pkg_plc_communicate_cpp>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>)
-target_compile_features(plc_reader PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+  $<INSTALL_INTERFACE:include>
+  ${LIBMODBUS_INCLUDE_DIRS}
+)
+target_compile_features(plc_communicate PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 ament_target_dependencies(
-  plc_reader
+  plc_communicate
   "rclcpp"
   "rclcpp_action"
   "pkg_beien_paint_msgs"
 )
 
-install(TARGETS plc_reader
+target_link_libraries(plc_communicate
+  ${LIBMODBUS_LIBRARIES}
+)
+
+target_compile_options(plc_communicate PUBLIC ${LIBMODBUS_CFLAGS_OTHER})
+
+install(TARGETS plc_communicate
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
