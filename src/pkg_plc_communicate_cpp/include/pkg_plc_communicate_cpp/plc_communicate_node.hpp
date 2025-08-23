@@ -27,8 +27,9 @@ namespace PlcCommunicate
         rclcpp::Publisher<UInt16MultiArray>::SharedPtr source_data_pub_;
         rclcpp::Subscription<UInt16MultiArray>::SharedPtr source_data_sub_;
         rclcpp::TimerBase::SharedPtr pub_interval_;
-        std::string plcIp_;
-        int plcPort_;
+        std::string plc_ip_;
+        int plc_port_;
+        int poll_rate_;
     };
 } // namespace PlcCommunicate
 
