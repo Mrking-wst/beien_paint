@@ -27,6 +27,8 @@ namespace modbus_wrapper
         void set_reconnect_interval_ms(const int interval);
         int get_holding_register_num();
         void set_holding_register_num(const int nums);
+        timeval get_response_timeout();
+        void set_response_timeout(const timeval response_timeout);
         void StartReading();
         void StopReading();
         void BindingDataReceived(DataReceived dr);
@@ -47,6 +49,7 @@ namespace modbus_wrapper
         DataReceived data_received_;
         bool is_reading_;
         int holding_register_num_;
+        timeval response_timeout_;
     };
 } // namespace modbus_wrapper
 

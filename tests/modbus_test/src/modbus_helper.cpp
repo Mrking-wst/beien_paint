@@ -53,6 +53,18 @@ namespace modbus_wrapper
         return this->holding_register_num_;
     }
 
+    timeval
+    ModbusHelper::get_response_timeout()
+    {
+        return this->response_timeout_;
+    }
+
+    void
+    ModbusHelper::set_response_timeout(const timeval response_timeout)
+    {
+        this->response_timeout_ = response_timeout;
+    }
+
     void
     ModbusHelper::set_ip_address(const std::string &ip)
     {
@@ -179,6 +191,12 @@ namespace modbus_wrapper
                 return;
             }
             std::cout << "--等待建立连接" << std::endl;
+
+            //  设置超时时间
+            // timeval response_timeout;
+            // response_timeout.tv_sec = 0;
+            // response_timeout.tv_usec = 1000000; //  1000ms
+            modbus_set_response_timeout(this->ctx_,response_timeout_.tv_sec,response_timeout_.tv_usec);
 
             if (modbus_connect(this->ctx_) == -1)
             {

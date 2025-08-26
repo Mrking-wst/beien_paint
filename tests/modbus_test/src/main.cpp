@@ -4,6 +4,7 @@
 #include <csignal>
 #include <atomic>
 #include <ctime>
+#include <iomanip>
 
 #include "modbus/modbus.h"
 #include "modbus/modbus-tcp.h"
@@ -24,6 +25,8 @@ void PrintData(std::vector<uint16_t> data)
     auto now = std::chrono::system_clock::now();
     auto timestamp_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
     std::cout << "[" << timestamp_ms << "]" << " registers: ";
+    // std::time_t t = std::chrono::system_clock::to_time_t(now);
+    // std::cout << "[" << std::put_time(std::localtime(&t), "%Y-%m-%d %H:%M:%S") << "]" << " " << std::this_thread::get_id() << " registers: ";
     for (int i = 0; i < data.size(); i++)
     {
         std::cout << data[i] << " ";
@@ -76,9 +79,13 @@ int main(int argc, char **argv)
     g_modbus = &modbus;
     modbus.set_ip_address("192.168.0.10");
     modbus.set_port(502);
-    modbus.set_reading_interval_ms(100);
+    modbus.set_reading_interval_ms(80);
     modbus.set_reconnect_interval_ms(3000);
     modbus.set_holding_register_num(20);
+    timeval time_out;
+    time_out.tv_sec = 0;
+    time_out.tv_usec = 1000000;
+    modbus.set_response_timeout(time_out);
     modbus.BindingDataReceived([](const std::vector<uint16_t> &datas)
                                { PrintData(datas); });
     modbus.StartReading();
