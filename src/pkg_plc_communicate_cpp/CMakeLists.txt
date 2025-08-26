@@ -30,6 +30,7 @@ ament_target_dependencies(
   "rclcpp"
   "rclcpp_action"
   "pkg_beien_paint_msgs"
+  "std_msgs"
 )
 
 target_link_libraries(plc_communicate
@@ -40,6 +41,16 @@ target_compile_options(plc_communicate PUBLIC ${LIBMODBUS_CFLAGS_OTHER})
 
 install(TARGETS plc_communicate
   DESTINATION lib/${PROJECT_NAME})
+
+# 安装 launch 文件
+install(DIRECTORY launch
+  DESTINATION share/${PROJECT_NAME}
+)
+
+# 安装参数文件
+install(DIRECTORY config
+  DESTINATION share/${PROJECT_NAME}
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
