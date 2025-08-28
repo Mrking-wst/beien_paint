@@ -2,4 +2,7 @@ plc_communicate:
     ros__parameters:
       plc_ip: "192.168.0.168"
       plc_port: 502
-      poll_rate: 200
+      read_interval: 200
+      reconnect_interval: 2000
+      holding_register_num: 20
+      response_timeout: 1000000
