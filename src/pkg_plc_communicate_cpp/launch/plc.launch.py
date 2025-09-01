@@ -1,10 +1,11 @@
 from launch import LaunchDescription
-from launch_ros.actions import Node
+from launch.actions import GroupAction
+from launch_ros.actions import Node,PushRosNamespace
 
 def generate_launch_description():
     return LaunchDescription([
         GroupAction(
-            actions[
+            actions=[
                 PushRosNamespace('plc'),    # 推送命名空间
                 Node(
                     package='pkg_plc_communicate_cpp',
