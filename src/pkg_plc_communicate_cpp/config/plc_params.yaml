@@ -1,11 +1,12 @@
-plc_communicate:
+plc:
+  plc_communicate:
     ros__parameters:
-      plc_ip: "192.168.31.106"
+      plc_ip: "192.168.100.5"
       plc_port: 502
       read_interval: 200
       reconnect_interval: 2000
       read_holding_register_start_address: 0
-      read_holding_register_num: 10
+      read_holding_register_num: 20
       write_holding_register_start_address: 0
       write_holding_register_num: 20
       response_timeout: 1
