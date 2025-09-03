@@ -1,6 +1,8 @@
 #ifndef JOYCON_LEFT_NODE_HPP
 #define JOYCON_LEFT_NODE_HPP
 
+#include <string>
+
 #include "rclcpp/rclcpp.hpp"
 #include "pkg_beien_paint_msgs/msg/joycon_left.hpp"
 namespace JoyStick
@@ -9,10 +11,21 @@ namespace JoyStick
     class JoyconLeftNode
         : public rclcpp::Node
     {
+    public:
+        JoyconLeftNode(const std::string &nodeName);
+        void Dispose();
+
+    private:
+        void PollTimerCallback();
+        void ReconnectTimerCallback();
 
     private:
         rclcpp::Publisher<JoyconLeft>::SharedPtr left_joycon_;
         rclcpp::TimerBase::SharedPtr poll_timer_;
+        rclcpp::TimerBase::SharedPtr reconnect_timer_;
+        bool is_connected_;
+        int poll_interval_ms_;
+        int reconnect_interval_ms_;
     };
 
 } // namespace JoyStick
