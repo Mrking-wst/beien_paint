@@ -5,6 +5,8 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "pkg_beien_paint_msgs/msg/joycon_left.hpp"
+#include "hidapi/hidapi.h"
+
 namespace JoyStick
 {
     using pkg_beien_paint_msgs::msg::JoyconLeft;
@@ -18,8 +20,11 @@ namespace JoyStick
     private:
         void PollTimerCallback();
         void ReconnectTimerCallback();
+        JoyconLeft ParseData(unsigned char *data);
 
     private:
+        hid_device *joycon_;
+        unsigned char data_[49];
         rclcpp::Publisher<JoyconLeft>::SharedPtr left_joycon_;
         rclcpp::TimerBase::SharedPtr poll_timer_;
         rclcpp::TimerBase::SharedPtr reconnect_timer_;

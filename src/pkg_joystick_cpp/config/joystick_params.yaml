@@ -1,0 +1,9 @@
+joycon_left_pub:
+  ros__parameters:
+    poll_interval_ms: 10
+    reconnect_interval_ms: 2000
+
+joycon_right_pub:
+  ros__parameters:
+    poll_interval_ms: 10
+    reconnect_interval_ms: 2000
