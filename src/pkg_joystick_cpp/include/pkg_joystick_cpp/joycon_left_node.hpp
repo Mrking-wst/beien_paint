@@ -2,6 +2,7 @@
 #define JOYCON_LEFT_NODE_HPP
 
 #include <string>
+#include <thread>
 
 #include "rclcpp/rclcpp.hpp"
 #include "pkg_beien_paint_msgs/msg/joycon_left.hpp"
@@ -18,16 +19,15 @@ namespace JoyStick
         void Dispose();
 
     private:
-        void PollTimerCallback();
-        void ReconnectTimerCallback();
+        void PollData();
+        void Reconnect();
         JoyconLeft ParseData(unsigned char *data);
 
     private:
         hid_device *joycon_;
         unsigned char data_[49];
         rclcpp::Publisher<JoyconLeft>::SharedPtr left_joycon_;
-        rclcpp::TimerBase::SharedPtr poll_timer_;
-        rclcpp::TimerBase::SharedPtr reconnect_timer_;
+        std::thread reconnect_thread_;
         bool is_connected_;
         int poll_interval_ms_;
         int reconnect_interval_ms_;

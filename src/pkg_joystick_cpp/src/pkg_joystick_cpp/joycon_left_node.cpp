@@ -1,6 +1,7 @@
 #include <string>
 #include <chrono>
 #include <sstream>
+#include <thread>
 
 #include "rclcpp/rclcpp.hpp"
 #include "pkg_beien_paint_msgs/msg/joycon_left.hpp"
@@ -22,34 +23,29 @@ namespace JoyStick
 
         this->left_joycon_ = this->create_publisher<JoyconLeft>("joycon_left", 10);
 
-        this->reconnect_timer_ = this->create_wall_timer(std::chrono::milliseconds(this->reconnect_interval_ms_),
-                                                         std::bind(&JoyconLeftNode::ReconnectTimerCallback, this));
-
-        this->poll_timer_ = this->create_wall_timer(std::chrono::milliseconds(this->poll_interval_ms_),
-                                                    std::bind(&JoyconLeftNode::PollTimerCallback, this));
-
         RCLCPP_INFO(this->get_logger(), "[%s] is initialized", this->get_name());
-        this->poll_timer_->cancel();
         int res = hid_init();
         if (res == -1)
             RCLCPP_INFO(this->get_logger(), "初始化hidapi库失败，请确保系统中成功安装：libhidapi-dev库");
         else
             RCLCPP_INFO(this->get_logger(), "初始化hidapi库成功");
+
+        this->reconnect_thread_ = std::thread(std::bind(&JoyconLeftNode::Reconnect, this));
+        RCLCPP_INFO(this->get_logger(), "启动连接并读取任务");
     }
 
     void
-    JoyconLeftNode::PollTimerCallback()
+    JoyconLeftNode::PollData()
     {
         int res = hid_read_timeout(this->joycon_, this->data_, sizeof(this->data_), 500);
 
         if (res <= 0)
         {
+            this->is_connected_ = false;
             RCLCPP_INFO(this->get_logger(), "收到数据长度： %d，手柄可能断开连接，详细信息：%ls",
                         res,
                         hid_error(this->joycon_));
             RCLCPP_INFO(this->get_logger(), "正在重新连接...");
-            this->poll_timer_->cancel();
-            this->reconnect_timer_->reset();
         }
         else
         {
@@ -69,20 +65,28 @@ namespace JoyStick
     }
 
     void
-    JoyconLeftNode::ReconnectTimerCallback()
+    JoyconLeftNode::Reconnect()
     {
-        this->joycon_ = hid_open(0x057E, 0x2006, nullptr);
+        while (rclcpp::ok())
+        {
+            this->joycon_ = hid_open(0x057E, 0x2006, nullptr);
 
-        if (this->joycon_ == nullptr)
-        {
-            RCLCPP_INFO(this->get_logger(), "joycon左手柄，连接失败");
-        }
-        else
-        {
+            if (this->joycon_ == nullptr)
+            {
+                this->is_connected_ = false;
+                RCLCPP_INFO(this->get_logger(), "joycon左手柄，连接失败");
+                std::this_thread::sleep_for(std::chrono::milliseconds(this->reconnect_interval_ms_));
+                continue;
+            }
             RCLCPP_INFO(this->get_logger(), "joycon左手柄，连接成功");
-            this->reconnect_timer_->cancel();
-            this->poll_timer_->reset();
+            this->is_connected_ = true;
+            while (rclcpp::ok() && this->is_connected_)
+            {
+                this->PollData();
+                // std::this_thread::sleep_for(std::chrono::milliseconds(this->poll_interval_ms_));
+            }
         }
+        RCLCPP_INFO(this->get_logger(), "用户强制退出左手柄交互");
     }
 
     JoyconLeft
@@ -155,12 +159,8 @@ namespace JoyStick
     JoyconLeftNode::Dispose()
     {
         RCLCPP_INFO(this->get_logger(), "释放节点资源...");
-        if (!this->poll_timer_->is_canceled())
-            this->poll_timer_->cancel();
-
-        if (!this->reconnect_timer_->is_canceled())
-            this->reconnect_timer_->cancel();
-
+        if (this->reconnect_thread_.joinable())
+            this->reconnect_thread_.join();
         hid_close(this->joycon_);
         hid_exit();
     }

@@ -1,6 +1,6 @@
 joycon_left_pub:
   ros__parameters:
-    poll_interval_ms: 10
+    poll_interval_ms: 0
     reconnect_interval_ms: 2000
 
 joycon_right_pub:
