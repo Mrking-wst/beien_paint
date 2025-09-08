@@ -31,10 +31,28 @@ ament_target_dependencies(
   "rclcpp_action"
   "std_msgs"
 )
-
 target_link_libraries(joycon_left_pub ${HIDAPI_LIBRARIES})
-
 install(TARGETS joycon_left_pub
+  DESTINATION lib/${PROJECT_NAME})
+
+add_executable(joycon_right_pub 
+  src/pkg_joystick_cpp/joycon_right_node.cpp
+  src/joycon_right_pub.cpp
+)
+target_include_directories(joycon_right_pub PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/pkg_joystick_cpp>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+target_compile_features(joycon_right_pub PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+ament_target_dependencies(
+  joycon_right_pub
+  "rclcpp"
+  "pkg_beien_paint_msgs"
+  "rclcpp_action"
+  "std_msgs"
+)
+target_link_libraries(joycon_right_pub ${HIDAPI_LIBRARIES})
+install(TARGETS joycon_right_pub
   DESTINATION lib/${PROJECT_NAME})
 
 # 安装 launch 文件

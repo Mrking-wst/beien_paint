@@ -173,8 +173,8 @@ namespace JoyStick
         joycon.function = false;
         joycon.sr = false;
         joycon.sl = false;
-        joycon.stick_x = 128;
-        joycon.stick_y = 128;
+        joycon.stick_x = 2048;
+        joycon.stick_y = 2047;
 
         if (data != nullptr)
         {
