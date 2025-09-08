@@ -21,7 +21,8 @@ namespace JoyStick
     private:
         void PollData();
         void Reconnect();
-        JoyconLeft ParseData(unsigned char *data);
+        JoyconLeft ParseData2404(unsigned char *data);
+        JoyconLeft ParseData2204(unsigned char *data);
 
     private:
         hid_device *joycon_;

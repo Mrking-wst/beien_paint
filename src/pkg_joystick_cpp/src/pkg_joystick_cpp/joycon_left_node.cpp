@@ -39,7 +39,7 @@ namespace JoyStick
     {
         int res = hid_read_timeout(this->joycon_, this->data_, sizeof(this->data_), 500);
 
-        if (res <= 0)
+        if (res < 0)
         {
             this->is_connected_ = false;
             RCLCPP_INFO(this->get_logger(), "收到数据长度： %d，手柄可能断开连接，详细信息：%ls",
@@ -47,9 +47,13 @@ namespace JoyStick
                         hid_error(this->joycon_));
             RCLCPP_INFO(this->get_logger(), "正在重新连接...");
         }
+        else if (res == 0)
+        {
+            RCLCPP_INFO(this->get_logger(), "读取超时");
+        }
         else
         {
-            JoyconLeft left = this->ParseData(this->data_);
+            JoyconLeft left = this->ParseData2204(this->data_);
             std::ostringstream oss;
 
             for (size_t i = 0; i < left.raw_data.size(); i++)
@@ -90,7 +94,7 @@ namespace JoyStick
     }
 
     JoyconLeft
-    JoyconLeftNode::ParseData(unsigned char *data)
+    JoyconLeftNode::ParseData2404(unsigned char *data)
     {
         JoyconLeft joycon;
         joycon.up = false;
@@ -146,6 +150,47 @@ namespace JoyStick
             }
             joycon.stick_x = data[5];
             joycon.stick_y = data[7];
+            for (int i = 0; i < 12; i++)
+            {
+                joycon.raw_data[i] = data[i];
+            }
+        }
+
+        return joycon;
+    }
+
+    JoyconLeft
+    JoyconLeftNode::ParseData2204(unsigned char *data)
+    {
+        JoyconLeft joycon;
+        joycon.up = false;
+        joycon.down = false;
+        joycon.left = false;
+        joycon.right = false;
+        joycon.l = false;
+        joycon.zl = false;
+        joycon.minus = false;
+        joycon.function = false;
+        joycon.sr = false;
+        joycon.sl = false;
+        joycon.stick_x = 128;
+        joycon.stick_y = 128;
+
+        if (data != nullptr)
+        {
+            joycon.minus = (data[4] & 0x01) != 0x00;
+            joycon.function = (data[4] & 0x20) != 0x00;
+            joycon.down = (data[5] & 0x01) != 0x00;
+            joycon.up = (data[5] & 0x02) != 0x00;
+            joycon.right = (data[5] & 0x04) != 0x00;
+            joycon.left = (data[5] & 0x08) != 0x00;
+            joycon.sr = (data[5] & 0x10) != 0x00;
+            joycon.sl = (data[5] & 0x20) != 0x00;
+            joycon.l = (data[5] & 0x40) != 0x00;
+            joycon.zl = (data[5] & 0x80) != 0x00;
+
+            joycon.stick_x = data[6] | ((data[7] & 0x0F) << 8);
+            joycon.stick_y = (data[7] >> 4) | (data[8] << 4);
             for (int i = 0; i < 12; i++)
             {
                 joycon.raw_data[i] = data[i];
