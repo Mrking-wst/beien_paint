@@ -1,7 +1,7 @@
 plc:
   plc_communicate:
     ros__parameters:
-      plc_ip: "192.168.100.5"
+      plc_ip: "192.168.31.106"
       plc_port: 502
       read_interval: 200
       reconnect_interval: 2000

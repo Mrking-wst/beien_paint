@@ -23,12 +23,12 @@ def generate_launch_description():
                     output='screen',
                     parameters=[config]
                 ),
-                # Node(
-                #     package='pkg_joystick_cpp',
-                #     executable='joycon_right',
-                #     name='joycon_right',
-                #     output='screen',
-                #     parameters=[config]
-                # )
+                Node(
+                    package='pkg_joystick_cpp',
+                    executable='joycon_right_pub',
+                    name='joycon_right_pub',
+                    output='screen',
+                    parameters=[config]
+                )
         ])
     ])

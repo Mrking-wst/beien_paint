@@ -38,8 +38,8 @@ namespace PlcCommunicate
 
         RCLCPP_INFO(this->get_logger(), "节点初始化");
 
-        this->source_data_pub_ = this->create_publisher<UInt16MultiArray>("source_data_pub", 10);
-        this->source_data_sub_ = this->create_subscription<UInt16MultiArray>("source_data_sub",
+        this->source_data_pub_ = this->create_publisher<UInt16MultiArray>("plc_feedback", 10);
+        this->source_data_sub_ = this->create_subscription<UInt16MultiArray>("plc_command",
                                                                              10,
                                                                              std::bind(&PlcCommunicateNode::SourceDataReceivedCallback, this, std::placeholders::_1));
         this->reconnect_time_ = this->create_wall_timer(std::chrono::milliseconds(this->reconnect_interval_),
