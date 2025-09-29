@@ -27,10 +27,10 @@ namespace KeyboardControl
         int base_angle_;
         int speed_;
         bool is_exit_;
-        const int max_speed_ = 25;
-        const int min_speed_ = 5;
-        const int max_angle_ = 25;
-        const int min_angle_ = -25;
+        const int max_speed_ = 40;
+        const int min_speed_ = 0;
+        const int max_angle_ = 40;
+        const int min_angle_ = -40;
 
     }; // namespace KeyboardControl
 }

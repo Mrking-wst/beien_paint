@@ -25,11 +25,15 @@ namespace BeienPaint
         void JoyconRightCallback(const JoyconRight &joycon_right_msg);
         float Map(float x, float in_min, float in_max, float out_min, float out_max);
         float Constrain(float x, float out_min, float out_max);
+        void PushCommand();
 
     private:
         rclcpp::Subscription<JoyconLeft>::SharedPtr joycon_left_sub_;
         rclcpp::Subscription<JoyconRight>::SharedPtr joycon_right_sub_;
         rclcpp::Publisher<PlcCommand>::SharedPtr plc_command_pub_;
+        rclcpp::TimerBase::SharedPtr push_command_timer_;
+        float speed_;
+        float angle_;
     };
 }
 
