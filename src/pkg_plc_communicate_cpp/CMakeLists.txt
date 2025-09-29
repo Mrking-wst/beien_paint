@@ -11,15 +11,18 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(pkg_beien_paint_msgs REQUIRED)
 find_package(PkgConfig REQUIRED)
+find_package(yaml-cpp REQUIRED)
 
 pkg_check_modules(LIBMODBUS REQUIRED libmodbus)
 
 add_executable(plc_communicate 
   src/pkg_plc_communicate_cpp/plc_communicate_node.cpp
+  src/plc_scheduler/plc_scheduler.cpp
   src/plc_communicate.cpp
 )
 target_include_directories(plc_communicate PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/pkg_plc_communicate_cpp>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/plc_scheduler>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
   ${LIBMODBUS_INCLUDE_DIRS}
@@ -31,10 +34,12 @@ ament_target_dependencies(
   "rclcpp_action"
   "pkg_beien_paint_msgs"
   "std_msgs"
+  "yaml-cpp"
 )
 
 target_link_libraries(plc_communicate
   ${LIBMODBUS_LIBRARIES}
+  yaml-cpp
 )
 
 target_compile_options(plc_communicate PUBLIC ${LIBMODBUS_CFLAGS_OTHER})

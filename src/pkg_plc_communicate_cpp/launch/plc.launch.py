@@ -9,8 +9,12 @@ def generate_launch_description():
     config = os.path.join(
         get_package_share_directory('pkg_plc_communicate_cpp'),
         'config',
-        'plc_params.yaml'
     )
+
+    # config_params = [
+    # os.path.join(get_package_share_directory('pkg_plc_communicate_cpp'), 'config', 'plc_params.yaml'),
+    # os.path.join(get_package_share_directory('pkg_plc_communicate_cpp'), 'config', 'plc_mapping.yaml')
+    # ]
 
     return LaunchDescription([
         GroupAction(
@@ -22,6 +26,7 @@ def generate_launch_description():
                     name='plc_communicate',
                     output='screen',
                     parameters=[config]
+                    # parameters=config_params
                 )
         ])
     ])

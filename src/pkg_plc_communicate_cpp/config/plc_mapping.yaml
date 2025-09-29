@@ -1,0 +1,23 @@
+plc_mapping:
+  left_servo_current_speed_addr: 0
+  right_servo_current_speed_addr: 1
+  system_warning1_addr: 2
+  system_warning2_addr: 3
+  input0_addr: 4
+  input2_addr: 5
+  input4_addr: 6
+  output0_addr: 7
+  output2_addr: 8
+  painting_servo_current_speed_addr: 9
+  painting_servo_current_torque_addr: 10
+  turn_servo_current_angle_addr: 11
+  lift_servo_current_speed_addr: 12
+  car_state_addr: 13
+  operation1_addr: 30
+  operation2_addr: 31
+  ui_handbtn1_addr: 32
+  ui_handbtn2_addr: 33
+  left_servo_speed_set_addr: 34
+  right_servo_speed_set_addr: 35
+  turn_servo_angle_set_addr: 36
+  joy_stick_operation_addr: 37
