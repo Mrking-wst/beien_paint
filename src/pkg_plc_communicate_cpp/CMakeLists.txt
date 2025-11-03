@@ -12,6 +12,7 @@ find_package(rclcpp_action REQUIRED)
 find_package(pkg_beien_paint_msgs REQUIRED)
 find_package(PkgConfig REQUIRED)
 find_package(yaml-cpp REQUIRED)
+find_package(ament_index_cpp REQUIRED)
 
 pkg_check_modules(LIBMODBUS REQUIRED libmodbus)
 
@@ -26,6 +27,7 @@ target_include_directories(plc_communicate PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
   ${LIBMODBUS_INCLUDE_DIRS}
+  ${ament_index_cpp_INCLUDE_DIRS}
 )
 target_compile_features(plc_communicate PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 ament_target_dependencies(
@@ -35,6 +37,7 @@ ament_target_dependencies(
   "pkg_beien_paint_msgs"
   "std_msgs"
   "yaml-cpp"
+  ament_index_cpp
 )
 
 target_link_libraries(plc_communicate
