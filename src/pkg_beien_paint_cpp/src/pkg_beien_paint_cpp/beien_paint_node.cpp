@@ -12,7 +12,9 @@ namespace BeienPaint
           zr_(false),
           l_(false),
           r_(false),
-          is_emergency_stop_(false)
+          is_emergency_stop_(false),
+          is_locking_(false),
+          lock_(false)
     {
         joycon_left_sub_ = this->create_subscription<JoyconLeft>(
             "joycon_left",
@@ -48,12 +50,27 @@ namespace BeienPaint
             lifting_raise_ = false;
             lifting_down_ = false;
         }
+
+        //  上锁 按下一次
+        if(lock_ != joycon_left_msg.function){
+            if(joycon_left_msg.function){
+            is_locking_ = !is_locking_;
+            }
+            lock_ = joycon_left_msg.function;
+        }
+
+        if(is_locking_){
+            speed_ = 0.0;
+            angle_ = 0.0;
+            lifting_raise_ = false;
+            lifting_down_ = false;
+        }
     }
 
     void
     BeienPaintNode::JoyconRightCallback(const JoyconRight &joycon_right_msg)
     {
-        if(joycon_right_msg.zr){
+        if(joycon_right_msg.zr && !is_locking_){
             angle_ = Map(joycon_right_msg.stick_x, 0, 4096, -40.0, 40.0);
         }
         else{
@@ -106,7 +123,7 @@ namespace BeienPaint
         plc_cmd.expire_duration.nanosec = 0;
         plc_cmd.header.stamp = this->now();
         this->plc_command_pub_->publish(plc_cmd);
-        RCLCPP_INFO(this->get_logger(), "数据写入--速度: %f  角度: %f 上升：%d 下降：%d 急停：%d\n", speed_, angle_, lifting_raise_, lifting_down_, is_emergency_stop_);
+        RCLCPP_INFO(this->get_logger(), "数据写入--速度: %f  角度: %f 上升：%d 下降：%d 急停：%d 锁：%d\n", speed_, angle_, lifting_raise_, lifting_down_, is_emergency_stop_, is_locking_);
         heart_beat_ += 1;
     }
 } // namespace BeienPaint

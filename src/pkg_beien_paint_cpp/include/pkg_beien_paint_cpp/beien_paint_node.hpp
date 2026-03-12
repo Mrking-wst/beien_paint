@@ -42,6 +42,8 @@ namespace BeienPaint
         bool l_;
         bool r_;
         bool is_emergency_stop_;
+        bool is_locking_;
+        bool lock_;
     };
 }
 
