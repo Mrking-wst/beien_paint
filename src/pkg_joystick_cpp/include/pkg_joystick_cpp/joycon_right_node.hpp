@@ -23,11 +23,12 @@ namespace JoyStick
         void Reconnect();
         JoyconRight ParseData2404(unsigned char *data);
         JoyconRight ParseData2204(unsigned char *data);
+        void ResetData();
 
     private:
         hid_device *joycon_;
         unsigned char data_[49];
-        rclcpp::Publisher<JoyconRight>::SharedPtr left_joycon_;
+        rclcpp::Publisher<JoyconRight>::SharedPtr right_joycon_;
         std::thread reconnect_thread_;
         bool is_connected_;
         int poll_interval_ms_;

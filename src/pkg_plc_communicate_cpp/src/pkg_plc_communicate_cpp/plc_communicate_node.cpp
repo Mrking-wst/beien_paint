@@ -24,8 +24,8 @@ namespace PlcCommunicate
     {
         // this->declare_parameter<std::string>("plc_ip", "192.168.31.106");
         // this->declare_parameter<std::string>("plc_ip", "192.168.100.5");
-        // this->declare_parameter<std::string>("plc_ip", "192.168.0.13");
-        this->declare_parameter<std::string>("plc_ip", "127.0.0.1");
+        this->declare_parameter<std::string>("plc_ip", "192.168.0.13");
+        // this->declare_parameter<std::string>("plc_ip", "127.0.0.1");
         this->declare_parameter<int>("plc_port", 502);
         this->declare_parameter<int>("read_interval", 100);
         this->declare_parameter<int>("reconnect_interval", 5000);

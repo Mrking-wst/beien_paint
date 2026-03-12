@@ -21,7 +21,7 @@ namespace JoyStick
         this->get_parameter<int>("poll_interval_ms", this->poll_interval_ms_);
         this->get_parameter<int>("reconnect_interval_ms", this->reconnect_interval_ms_);
 
-        this->left_joycon_ = this->create_publisher<JoyconRight>("joycon_right", 10);
+        this->right_joycon_ = this->create_publisher<JoyconRight>("joycon_right", 10);
 
         RCLCPP_INFO(this->get_logger(), "[%s] is initialized", this->get_name());
         int res = hid_init();
@@ -46,25 +46,27 @@ namespace JoyStick
                         res,
                         hid_error(this->joycon_));
             RCLCPP_INFO(this->get_logger(), "正在重新连接...");
+            this->ResetData();
         }
         else if (res == 0)
         {
             RCLCPP_INFO(this->get_logger(), "读取超时");
+            this->ResetData();
         }
         else
         {
-            JoyconRight left = this->ParseData2204(this->data_);
-            std::ostringstream oss;
+            JoyconRight right = this->ParseData2204(this->data_);
+            // std::ostringstream oss;
 
-            for (size_t i = 0; i < left.raw_data.size(); i++)
-            {
-                oss << static_cast<int>(left.raw_data[i]);
-                if (i != left.raw_data.size() - 1)
-                    oss << " ";
-            }
+            // for (size_t i = 0; i < right.raw_data.size(); i++)
+            // {
+            //     oss << static_cast<int>(right.raw_data[i]);
+            //     if (i != right.raw_data.size() - 1)
+            //         oss << " ";
+            // }
 
             // RCLCPP_INFO(this->get_logger(), "原始数据：%s", oss.str().c_str());
-            this->left_joycon_->publish(left);
+            this->right_joycon_->publish(right);
         }
     }
 
@@ -170,6 +172,26 @@ namespace JoyStick
         }
 
         return joycon;
+    }
+
+    void
+    JoyconRightNode::ResetData()
+    {
+        JoyconRight joycon;
+        joycon.y = false;
+        joycon.x = false;
+        joycon.b = false;
+        joycon.a = false;
+        joycon.sr = false;
+        joycon.sl = false;
+        joycon.r = false;
+        joycon.zr = false;
+        joycon.plus = false;
+        joycon.home = false;
+        joycon.stick_x = 2048;
+        joycon.stick_y = 2047;
+
+        this->right_joycon_->publish(joycon);
     }
 
     void

@@ -2,6 +2,7 @@
 #include <chrono>
 #include <sstream>
 #include <thread>
+#include <cstring>
 
 #include "rclcpp/rclcpp.hpp"
 #include "pkg_beien_paint_msgs/msg/joycon_left.hpp"
@@ -46,22 +47,24 @@ namespace JoyStick
                         res,
                         hid_error(this->joycon_));
             RCLCPP_INFO(this->get_logger(), "正在重新连接...");
+            this->ResetData();
         }
         else if (res == 0)
         {
             RCLCPP_INFO(this->get_logger(), "读取超时");
+            this->ResetData();
         }
         else
         {
             JoyconLeft left = this->ParseData2204(this->data_);
-            std::ostringstream oss;
+            // std::ostringstream oss;
 
-            for (size_t i = 0; i < left.raw_data.size(); i++)
-            {
-                oss << static_cast<int>(left.raw_data[i]);
-                if (i != left.raw_data.size() - 1)
-                    oss << " ";
-            }
+            // for (size_t i = 0; i < left.raw_data.size(); i++)
+            // {
+            //     oss << static_cast<int>(left.raw_data[i]);
+            //     if (i != left.raw_data.size() - 1)
+            //         oss << " ";
+            // }
 
             // RCLCPP_INFO(this->get_logger(), "原始数据：%s", oss.str().c_str());
             this->left_joycon_->publish(left);
@@ -198,6 +201,28 @@ namespace JoyStick
         }
 
         return joycon;
+    }
+
+    void
+    JoyconLeftNode::ResetData()
+    {
+        // if(!this->is_connected_)
+        //     memset(this->data_,0,sizeof(this->data_));
+        JoyconLeft joycon;
+        joycon.up = false;
+        joycon.down = false;
+        joycon.left = false;
+        joycon.right = false;
+        joycon.l = false;
+        joycon.zl = false;
+        joycon.minus = false;
+        joycon.function = false;
+        joycon.sr = false;
+        joycon.sl = false;
+        joycon.stick_x = 2048;
+        joycon.stick_y = 2047;
+
+        this->left_joycon_->publish(joycon);
     }
 
     void

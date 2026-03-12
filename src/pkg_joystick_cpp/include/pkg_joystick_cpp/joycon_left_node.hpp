@@ -23,6 +23,7 @@ namespace JoyStick
         void Reconnect();
         JoyconLeft ParseData2404(unsigned char *data);
         JoyconLeft ParseData2204(unsigned char *data);
+        void ResetData();
 
     private:
         hid_device *joycon_;

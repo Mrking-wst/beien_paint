@@ -118,13 +118,13 @@ namespace BeienPaint
         //  心跳        30       60
         //  上升        31       62
         //  下降        32       64
-        //  保留        33       66
+        //  急停        33       66
         //  保留        34       68
         //  角度        35       70
         //  保留        36       72
         //  速度        37       74
         plc_cmd.start_address = 30; // 假设起始地址为1
-        plc_cmd.register_values = {static_cast<uint16_t>(heart_beat_),static_cast<uint16_t>(lifting_raise_),static_cast<uint16_t>(lifting_down_),0,0,static_cast<uint16_t>(angle_), 0,static_cast<uint16_t>(speed_)};
+        plc_cmd.register_values = {static_cast<uint16_t>(heart_beat_),static_cast<uint16_t>(lifting_raise_),static_cast<uint16_t>(lifting_down_),static_cast<uint16_t>(is_emergency_stop_),0,static_cast<uint16_t>(angle_), 0,static_cast<uint16_t>(speed_)};
         plc_cmd.priority = 1;            // 优先级
         plc_cmd.op_type = 0;             // 假设1代表写操作
         plc_cmd.write_mode = 1;          // 假设1代表覆盖模式
@@ -132,7 +132,7 @@ namespace BeienPaint
         plc_cmd.expire_duration.nanosec = 0;
         plc_cmd.header.stamp = this->now();
         this->plc_command_pub_->publish(plc_cmd);
-        RCLCPP_INFO(this->get_logger(), "数据写入--速度: %f  角度: %f 上升：%d 下降：%d 急停：%d 锁：%d\n", speed_, angle_, lifting_raise_, lifting_down_, is_emergency_stop_, is_locking_);
+        RCLCPP_INFO(this->get_logger(), "数据写入--速度: %f  角度: %f 上升：%d 下降：%d 急停：%d 锁：%d\n\n", speed_, angle_, lifting_raise_, lifting_down_, is_emergency_stop_, is_locking_);
         heart_beat_ += 1;
     }
 } // namespace BeienPaint
