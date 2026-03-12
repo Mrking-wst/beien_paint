@@ -114,6 +114,15 @@ namespace BeienPaint
         if(heart_beat_>20) heart_beat_ = 0;
         PlcCommand plc_cmd;
         plc_cmd.source_id = "BeienPaintNode";
+        //  功能     寄存器地址    VW
+        //  心跳        30       60
+        //  上升        31       62
+        //  下降        32       64
+        //  保留        33       66
+        //  保留        34       68
+        //  角度        35       70
+        //  保留        36       72
+        //  速度        37       74
         plc_cmd.start_address = 30; // 假设起始地址为1
         plc_cmd.register_values = {static_cast<uint16_t>(heart_beat_),static_cast<uint16_t>(lifting_raise_),static_cast<uint16_t>(lifting_down_),0,0,static_cast<uint16_t>(angle_), 0,static_cast<uint16_t>(speed_)};
         plc_cmd.priority = 1;            // 优先级
