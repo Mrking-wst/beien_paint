@@ -34,6 +34,14 @@ namespace BeienPaint
         rclcpp::TimerBase::SharedPtr push_command_timer_;
         float speed_;
         float angle_;
+        bool lifting_raise_;
+        bool lifting_down_;
+        uint8_t heart_beat_;
+        bool zl_;
+        bool zr_;
+        bool l_;
+        bool r_;
+        bool is_emergency_stop_;
     };
 }
 

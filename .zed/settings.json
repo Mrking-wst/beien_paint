@@ -1,0 +1,22 @@
+{
+  "lsp": {
+    "clangd": {
+      "settings": {
+        "clangd": {
+          "arguments": [
+            //  --background-index：后台索引，加快提示速度
+            //  --clang-tidy：启用 clang-tidy 检查
+            //  --header-insertion=iwyu：自动添加需要的头文件
+            //  --completion-style=detailed：显示更详细的补全信息
+
+            "--compile-commands-dir=./build",
+            "--background-index",
+            "--clang-tidy",
+            "--header-insertion=iwyu",
+            "--completion-style=detailed",
+          ],
+        },
+      },
+    },
+  },
+}

@@ -63,7 +63,7 @@ namespace JoyStick
                     oss << " ";
             }
 
-            RCLCPP_INFO(this->get_logger(), "原始数据：%s", oss.str().c_str());
+            // RCLCPP_INFO(this->get_logger(), "原始数据：%s", oss.str().c_str());
             this->left_joycon_->publish(left);
         }
     }

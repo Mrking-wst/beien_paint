@@ -63,7 +63,7 @@ namespace JoyStick
                     oss << " ";
             }
 
-            RCLCPP_INFO(this->get_logger(), "原始数据：%s", oss.str().c_str());
+            // RCLCPP_INFO(this->get_logger(), "原始数据：%s", oss.str().c_str());
             this->left_joycon_->publish(left);
         }
     }
@@ -119,7 +119,7 @@ namespace JoyStick
             joycon.zr = (data[1] & 0x80) != 0x00;
             joycon.plus = (data[2] & 0x02) != 0x00;
 
-            
+
             joycon.stick_x = data[9];
             joycon.stick_y = data[11];
             for (int i = 0; i < 12; i++)

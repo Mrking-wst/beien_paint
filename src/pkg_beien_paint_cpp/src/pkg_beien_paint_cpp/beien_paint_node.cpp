@@ -6,7 +6,13 @@
 namespace BeienPaint
 {
     BeienPaintNode::BeienPaintNode(const std::string &node_name)
-        : Node(node_name), speed_(0.0), angle_(0.0)
+        : Node(node_name), speed_(0.0), angle_(0.0),lifting_raise_(false),lifting_down_(false),
+          heart_beat_(0),
+          zl_(false),
+          zr_(false),
+          l_(false),
+          r_(false),
+          is_emergency_stop_(false)
     {
         joycon_left_sub_ = this->create_subscription<JoyconLeft>(
             "joycon_left",
@@ -26,13 +32,47 @@ namespace BeienPaint
     void
     BeienPaintNode::JoyconLeftCallback(const JoyconLeft &joycon_left_msg)
     {
-        speed_ = Map(joycon_left_msg.stick_y, 0, 4096, -40.0, 40.0);
+
+        if(joycon_left_msg.zl){
+            speed_ = Map(joycon_left_msg.stick_y, 0, 4096, -40.0, 40.0);
+        }
+        else{
+            speed_ = 0.0;
+        }
+
+        if(joycon_left_msg.l){
+            lifting_raise_ = joycon_left_msg.up;
+            lifting_down_ = joycon_left_msg.down;
+        }
+        else{
+            lifting_raise_ = false;
+            lifting_down_ = false;
+        }
     }
 
     void
     BeienPaintNode::JoyconRightCallback(const JoyconRight &joycon_right_msg)
     {
-        angle_ = Map(joycon_right_msg.stick_x, 0, 4096, -40.0, 40.0);
+        if(joycon_right_msg.zr){
+            angle_ = Map(joycon_right_msg.stick_x, 0, 4096, -40.0, 40.0);
+        }
+        else{
+            angle_ = 0.0;
+        }
+
+        if(joycon_right_msg.b){
+            is_emergency_stop_ = true;
+        }
+        else{
+            is_emergency_stop_ = false;
+        }
+
+        if(is_emergency_stop_){
+            lifting_raise_ = false;
+            lifting_down_ = false;
+            angle_ = 0.0;
+            speed_ = 0.0;
+        }
     }
 
     float
@@ -54,10 +94,11 @@ namespace BeienPaint
     void
     BeienPaintNode::PushCommand()
     {
+        if(heart_beat_>20) heart_beat_ = 0;
         PlcCommand plc_cmd;
         plc_cmd.source_id = "BeienPaintNode";
-        plc_cmd.start_address = 3; // 假设起始地址为1
-        plc_cmd.register_values = {static_cast<uint16_t>(angle_), static_cast<uint16_t>(speed_)};
+        plc_cmd.start_address = 30; // 假设起始地址为1
+        plc_cmd.register_values = {static_cast<uint16_t>(heart_beat_),static_cast<uint16_t>(lifting_raise_),static_cast<uint16_t>(lifting_down_),0,0,static_cast<uint16_t>(angle_), 0,static_cast<uint16_t>(speed_)};
         plc_cmd.priority = 1;            // 优先级
         plc_cmd.op_type = 0;             // 假设1代表写操作
         plc_cmd.write_mode = 1;          // 假设1代表覆盖模式
@@ -65,6 +106,7 @@ namespace BeienPaint
         plc_cmd.expire_duration.nanosec = 0;
         plc_cmd.header.stamp = this->now();
         this->plc_command_pub_->publish(plc_cmd);
-        RCLCPP_INFO(this->get_logger(), "数据写入--速度: %f  角度: %f", speed_, angle_);
+        RCLCPP_INFO(this->get_logger(), "数据写入--速度: %f  角度: %f 上升：%d 下降：%d 急停：%d\n", speed_, angle_, lifting_raise_, lifting_down_, is_emergency_stop_);
+        heart_beat_ += 1;
     }
 } // namespace BeienPaint
